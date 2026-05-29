@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory Management</title>
+
+    <!-- ICONS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #ffffff;
+        }
+
+        /* Top Navigation */
+        .nav {
+            background: #e0e0e0;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 15px;
+            margin: 0 auto;
+        }
+
+        .nav-btn {
+            background: #cfcfcf;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-btn:hover {
+            background: #b5b5b5;
+        }
+
+        /* Profile Button */
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #dcdcdc;
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .profile-icon {
+            width: 35px;
+            height: 35px;
+            background: #bfbfbf;
+            border-radius: 50%;
+        }
+
+        .profile-name {
+            font-weight: bold;
+        }
+
+        /* Popup overlay */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-box {
+            background: white;
+            padding: 25px;
+            width: 600px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            position: relative;
+            cursor: move;
+        }
+
+        .close-btn {
+            margin-top: 20px;
+            padding: 8px 15px;
+            background: #dcdcdc;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Left Info Panel */
+        .info-panel {
+            width: 300px;
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        /* Right Table Panel */
+        .table-panel {
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #dcdcdc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            background: #efefef;
+            padding: 10px;
+            border-bottom: 10px solid white;
+        }
+
+        input {
+            width: 70px;
+            padding: 5px;
+        }
+
+        .positive { color: green; }
+        .negative { color: red; }
+
+        /* Search + Filter */
+        .search-filter-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .search-input {
+            width: 250px;
+            padding: 10px 10px 10px 32px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .filter-btn {
+            padding: 10px 18px;
+            background: #cfcfcf;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-btn:hover {
+            background: #b5b5b5;
+        }
+
+        /* Product Images */
+        .product-img {
+            width: 55px;
+            height: 55px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        .top-left-brand {
+            position: fixed;
+            top: 20px;
+            left: 70px; /* space beside sidebar toggle */
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2200;
+}
+
+.brand-logo {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    margin-left: -47px;
+}
+
+.brand-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    top: 20px;
+    left: 70px;
+    display: flex;
+    gap: 10px;
+    z-index: 2200;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.product-card {
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.product-card-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.product-card-name {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.sales-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.sales-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.sales-img {
+    width: 55px;
+    height: 55px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.sales-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.sales-name {
+    font-weight: bold;
+}
+
+.sales-qty {
+    font-size: 13px;
+    color: #555;
+}
+.purchase-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.purchase-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.purchase-img {
+    width: 55px;
+    height: 55px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.purchase-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.purchase-name {
+    font-weight: bold;
+}
+
+.purchase-qty {
+    font-size: 13px;
+    color: #555;
+}
+
+.center-page-title {
+    text-align: left;
+    font-size: 26px;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+
+    </style>
+</head>
+<body>
+
+<div class="top-left-brand">
+    <img src="/static/icon.jpg" class="brand-logo">
+    <span class="brand-title">Inventory Management</span>
+</div>
+
+    <!-- Navigation -->
+    <div class="nav">
+        <div class="nav-center">
+            <button class="nav-btn" onclick="openDashboard()"><i class="fa-solid fa-chart-line"></i> Dashboard</button>
+            <button class="nav-btn" onclick="openProducts()"><i class="fa-solid fa-box"></i> Products</button>
+            <button class="nav-btn" onclick="openSales()"><i class="fa-solid fa-receipt"></i> Sales</button>
+        </div>
+
+        <div class="profile-btn" onclick="openProfile()">
+            <div class="profile-icon"></div>
+            <div class="profile-name">{{ profile.name }}</div>
+        </div>
+    </div>
+    <div class="center-page-title">
+    Inventory Warehouse
+</div>
+
+
+    <div class="container">
+
+        <!-- Left Panel -->
+        <div class="info-panel">
+            <h3>Basic Information</h3>
+            <div><b>Location:</b> Warehouse A</div>
+            <div><b>Date:</b> Nov 23, 2023</div>
+            <div><b>Category:</b> All Products</div>
+            <div><b>Assignee:</b> {{ profile.name }}</div>
+            <div><b>Progress:</b> {{ inventory|length }} items</div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="table-panel">
+
+            <!-- SEARCH + FILTER -->
+            <div class="search-filter-container">
+
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search product..." onkeyup="filterTable()">
+                </div>
+
+                <button class="filter-btn">
+                    <i class="fa-solid fa-filter"></i> Filter
+                </button>
+
+            </div>
+
+            <form action="/update" method="POST">
+                <table id="inventoryTable">
+                    <tr>
+                        <th>No</th>
+                        <th>Image</th>
+                        <th>Product Name</th>
+                        <th>On Hand</th>
+                        <th>Counted</th>
+                        <th>Difference</th>
+                    </tr>
+
+                    {% for item in inventory %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+
+                        <td>
+                            <img src="{{ item.image }}" class="product-img">
+                        </td>
+
+                        <td class="product-name">{{ item.name }}</td>
+                        <td>{{ item.on_hand }}</td>
+                        <td><input type="number" name="counted_{{ item.id }}" value="{{ item.counted }}"></td>
+
+                        <td>
+                            {% if item.difference > 0 %}
+                                <span class="positive">+{{ item.difference }}</span>
+                            {% elif item.difference < 0 %}
+                                <span class="negative">{{ item.difference }}</span>
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+
+                <br>
+                <button type="submit" style="padding:10px 20px;">Update Inventory</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="addProductPopup">
+    <div class="popup-box">
+        <h2>Add New Product</h2>
+
+        <label>Name</label>
+        <input type="text" id="newName" class="popup-input">
+
+        <label>Category</label>
+        <select id="newCategory" class="popup-input">
+            <option value="Shirts">Shirts</option>
+            <option value="Sweaters">Sweaters</option>
+            <option value="Pants">Pants</option>
+            <option value="T-Shirts">T-Shirts</option>
+            <option value="Accessories">Accessories</option>
+        </select>
+
+        <label>On Hand</label>
+        <input type="number" id="newStock" class="popup-input">
+
+        <label>Image URL</label>
+        <input type="text" id="newImage" class="popup-input" placeholder="https://example.com/image.jpg">
+
+        <button class="apply-filter-btn" onclick="saveNewProduct()">Save</button>
+        <div class="close-btn" onclick="closeAddProduct()">Close</div>
+    </div>
+</div>
+
+
+    <!-- POPUPS (Dashboard, Profile, Products, Sales, Purchase, Inventory) -->
+    <div class="popup-overlay" id="dashboardPopup">
+        <div class="popup-box">
+            <h2>Dashboard</h2>
+            <p><b>Total Products:</b> {{ inventory|length }}</p>
+            <p><b>Total Stock:</b> {{ inventory | sum(attribute='on_hand') }}</p>
+            <p><b>Over Count:</b> {{ inventory | selectattr('difference', 'gt', 0) | list | length }}</p>
+            <p><b>Under Count:</b> {{ inventory | selectattr('difference', 'lt', 0) | list | length }}</p>
+            <div class="close-btn" onclick="closeDashboard()">Close</div>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="profilePopup">
+        <div class="popup-box">
+            <h2>Profile</h2>
+            <p><b>Name:</b> {{ profile.name }}</p>
+            <p><b>Status:</b> Active</p>
+            <p><b>Role:</b> Inventory Manager</p>
+            <div class="close-btn" onclick="closeProfile()">Close</div>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="productsPopup">
+    <div class="popup-box">
+        <h2>Products</h2>
+
+        <div class="products-grid">
+            {% for item in inventory %}
+            <div class="product-card">
+                <img src="{{ item.image }}" class="product-card-img">
+                <div class="product-card-name">{{ item.name }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="close-btn" onclick="closeProducts()">Close</div>
+    </div>
+</div>
+
+
+
+   <div class="popup-overlay" id="salesPopup">
+    <div class="popup-box">
+        <h2>Sales</h2>
+
+        <div class="sales-list">
+            {% for item in inventory %}
+            <div class="sales-row">
+                <img src="{{ item.image }}" class="sales-img">
+                <div class="sales-info">
+                    <div class="sales-name">{{ item.name }}</div>
+                    <div class="sales-qty">Sold: {{ item.counted }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="close-btn" onclick="closeSales()">Close</div>
+    </div>
+</div>
+
+
+    <script>
+        /* Popup Open/Close */
+        function openDashboard() { document.getElementById("dashboardPopup").style.display = "flex"; }
+        function closeDashboard() { document.getElementById("dashboardPopup").style.display = "none"; }
+
+        function openProfile() { document.getElementById("profilePopup").style.display = "flex"; }
+        function closeProfile() { document.getElementById("profilePopup").style.display = "none"; }
+
+        function openProducts() { document.getElementById("productsPopup").style.display = "flex"; }
+        function closeProducts() { document.getElementById("productsPopup").style.display = "none"; }
+
+        function openSales() { document.getElementById("salesPopup").style.display = "flex"; }
+        function closeSales() { document.getElementById("salesPopup").style.display = "none"; }
+
+
+
+        /* SEARCH FUNCTION */
+        function filterTable() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let rows = document.querySelectorAll("#inventoryTable tr");
+
+            rows.forEach((row, index) => {
+                if (index === 0) return;
+                let name = row.querySelector(".product-name").textContent.toLowerCase();
+                row.style.display = name.includes(input) ? "" : "none";
+            });
+        }
+
+        function saveNewProduct() {
+    const name = document.getElementById("newName").value;
+    const category = document.getElementById("newCategory").value;
+    const stock = document.getElementById("newStock").value;
+    const image = document.getElementById("newImage").value;
+
+    if (!name || !stock || !image) {
+        alert("Name, stock, and image URL are required");
+        return;
+    }
+
+    fetch("/add_product", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            name: name,
+            category: category,
+            stock: stock,
+            image: image
+        })
+    }).then(() => {
+        alert("Product added!");
+        closeAddProduct();
+        refreshInventory();
+    });
+}
+
+function refreshInventory() {
+    fetch("/inventory_data")
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(item => {
+                document.getElementById("onhand_" + item.id).innerText = item.on_hand;
+                document.getElementById("counted_" + item.id).value = item.counted;
+
+                document.getElementById("img_" + item.id).src = item.image;
+
+                let diffCell = document.getElementById("diff_" + item.id);
+
+                if (item.difference > 0) {
+                    diffCell.innerHTML = `<span class="positive">+${item.difference}</span>`;
+                } else if (item.difference < 0) {
+                    diffCell.innerHTML = `<span class="negative">${item.difference}</span>`;
+                } else {
+                    diffCell.innerHTML = "0";
+                }
+            });
+        });
+}
+
+setInterval(refreshInventory, 5000);
+
+
+        /* DRAGGABLE POPUPS */
+        function makeDraggable(popupId) {
+            const popup = document.getElementById(popupId).querySelector(".popup-box");
+            let offsetX = 0, offsetY = 0, isDown = false;
+
+            popup.addEventListener("mousedown", (e) => {
+                isDown = true;
+                offsetX = e.clientX - popup.offsetLeft;
+                offsetY = e.clientY - popup.offsetTop;
+                popup.style.transition = "none";
+            });
+
+            document.addEventListener("mouseup", () => {
+                isDown = false;
+                popup.style.transition = "0.1s";
+            });
+
+            document.addEventListener("mousemove", (e) => {
+                if (!isDown) return;
+                popup.style.left = (e.clientX - offsetX) + "px";
+                popup.style.top = (e.clientY - offsetY) + "px";
+                popup.style.position = "absolute";
+            });
+        }
+
+        window.onload = () => {
+            makeDraggable("dashboardPopup");
+            makeDraggable("profilePopup");
+            makeDraggable("productsPopup");
+            makeDraggable("salesPopup");
+        };
+    </script>
+
+</body>
+</html>

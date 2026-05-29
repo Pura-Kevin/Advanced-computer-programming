@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard UI</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #ffffff;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            height: 70px;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 15px;
+        }
+
+        .nav-item {
+            width: 40px;
+            height: 40px;
+            background: #cfcfcf;
+            border-radius: 6px;
+        }
+
+        .nav-profile {
+            margin-left: auto;
+            width: 45px;
+            height: 45px;
+            background: #cfcfcf;
+            border-radius: 50%;
+        }
+
+        /* Search bars */
+        .search-area {
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .search-box {
+            flex: 1;
+            height: 40px;
+            background: #f0f0f0;
+            border-radius: 6px;
+        }
+
+        /* Main layout */
+        .main {
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Left form panel */
+        .left-panel {
+            width: 280px;
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .left-panel input,
+        .left-panel button {
+            width: 100%;
+            height: 35px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 6px;
+            padding: 8px;
+            background: #ffffff;
+        }
+
+        .left-panel button {
+            background: #dcdcdc;
+            cursor: pointer;
+        }
+
+        /* Right table/list panel */
+        .right-panel {
+            flex: 1;
+        }
+
+        .row {
+            height: 45px;
+            background: #efefef;
+            margin-bottom: 12px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="nav-item"></div>
+        <div class="nav-item"></div>
+        <div class="nav-item"></div>
+        <div class="nav-item"></div>
+        <div class="nav-item"></div>
+        <div class="nav-profile"></div>
+    </div>
+
+    <!-- Search Bars -->
+    <div class="search-area">
+        <div class="search-box"></div>
+        <div class="search-box"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+
+        <!-- Left Form Panel -->
+        <div class="left-panel">
+            <input type="text" placeholder="Input 1">
+            <input type="text" placeholder="Input 2">
+            <input type="text" placeholder="Input 3">
+            <input type="text" placeholder="Input 4">
+            <button>Submit</button>
+        </div>
+
+        <!-- Right Table/List Panel -->
+        <div class="right-panel">
+            <div class="row"></div>
+            <div class="row"></div>
+            <div class="row"></div>
+            <div class="row"></div>
+            <div class="row"></div>
+            <div class="row"></div>
+            <div class="row"></div>
+        </div>
+
+    </div>
+
+</body>
+</html>
